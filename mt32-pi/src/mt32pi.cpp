@@ -1125,14 +1125,19 @@ void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 
 	if (Event.Button == TButton::Button1 && !Event.bRepeat)
 	{
+		m_pSoundFontSynth->IncrementCurrentProgram();
+		/*
 		// Swap synths
 		if (m_pCurrentSynth == m_pMT32Synth)
 			SwitchSynth(TSynth::SoundFont);
 		else
 			SwitchSynth(TSynth::MT32);
+		*/
 	}
 	else if (Event.Button == TButton::Button2 && !Event.bRepeat)
 	{
+		m_pSoundFontSynth->DecrementCurrentProgram();
+		/*
 		if (m_pCurrentSynth == m_pMT32Synth)
 			NextMT32ROMSet();
 		else
@@ -1160,6 +1165,7 @@ void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 				DeferSwitchSoundFont(nNextSoundFont);
 			}
 		}
+		*/
 	}
 	else if (Event.Button == TButton::Button3)
 	{
@@ -1256,7 +1262,6 @@ void CMT32Pi::SetMasterVolume(s32 nVolume)
 		m_pMT32Synth->SetMasterVolume(m_nMasterVolume);
 	if (m_pSoundFontSynth)
 		m_pSoundFontSynth->SetMasterVolume(m_nMasterVolume);
-
 	if (m_pCurrentSynth == m_pSoundFontSynth)
 		LCDLog(TLCDLogType::Notice, "Volume: %d", m_nMasterVolume);
 }

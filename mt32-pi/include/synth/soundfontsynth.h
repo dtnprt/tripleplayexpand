@@ -53,6 +53,11 @@ public:
 	size_t GetSoundFontIndex() const { return m_nCurrentSoundFontIndex; }
 	CSoundFontManager& GetSoundFontManager() { return m_SoundFontManager; }
 
+	u8 GetCurrentProgram();
+	void SetCurrentProgram(u8 PG);
+	u8 IncrementCurrentProgram();
+	u8 DecrementCurrentProgram();
+
 private:
 	bool Reinitialize(const char* pSoundFontPath, const TFXProfile* pFXProfile);
 	void ResetMIDIMonitor();

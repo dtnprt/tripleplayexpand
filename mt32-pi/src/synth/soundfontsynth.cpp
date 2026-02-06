@@ -244,23 +244,19 @@ void CSoundFontSynth::HandleMIDIShortMessage(u32 nMessage)
 		// Control change
 		case 0xB0:
 			fluid_synth_cc(m_pSynth, nChannel, nData1, nData2);
-			if(nChannel == 0 && nData1 == 0x07 && m_pUI) // Volume Change Channel 0
-				m_pUI->ShowSystemMessage("Volume: %d", nData1);
+			if(m_pUI && nData1 != 30){
+				char m_HeaderTextBuffer[32];
+				snprintf(m_HeaderTextBuffer, sizeof(m_HeaderTextBuffer), "CC #%d: %d", nData1, nData2);
+				m_pUI->ShowSystemMessage(m_HeaderTextBuffer, false);
+			}
+
 			break;
 
 		// Program change
 		case 0xC0:
 
-			CURRENT_PROGRAM = nData1;
 			fluid_synth_program_change(m_pSynth, nChannel, nData1);
-
-			// Hack for Triple Play Express
-			fluid_synth_program_change(m_pSynth, 0, nData1);
-			fluid_synth_program_change(m_pSynth, 1, nData1);
-			fluid_synth_program_change(m_pSynth, 2, nData1);
-			fluid_synth_program_change(m_pSynth, 3, nData1);
-			fluid_synth_program_change(m_pSynth, 4, nData1);
-			fluid_synth_program_change(m_pSynth, 5, nData1);
+			SetCurrentProgram(nData1);
 
 			break;
 
@@ -362,6 +358,40 @@ void CSoundFontSynth::UpdateLCD(CLCD& LCD, unsigned int nTicks)
 	CUserInterface::DrawHeader(LCD, m_nVolume, presetName, 0, bank_num, preset_num);
 	
 }
+
+u8 CSoundFontSynth::GetCurrentProgram(){
+	return CURRENT_PROGRAM;
+}
+
+void CSoundFontSynth::SetCurrentProgram(u8 PG){
+		CURRENT_PROGRAM = PG;
+	
+		// Hack for Triple Play Express
+		fluid_synth_program_change(m_pSynth, 0, CURRENT_PROGRAM);
+		fluid_synth_program_change(m_pSynth, 1, CURRENT_PROGRAM);
+		fluid_synth_program_change(m_pSynth, 2, CURRENT_PROGRAM);
+		fluid_synth_program_change(m_pSynth, 3, CURRENT_PROGRAM);
+		fluid_synth_program_change(m_pSynth, 4, CURRENT_PROGRAM);
+		fluid_synth_program_change(m_pSynth, 5, CURRENT_PROGRAM);
+
+}
+
+u8 CSoundFontSynth::IncrementCurrentProgram()
+{
+	if(CURRENT_PROGRAM < 127)
+		CURRENT_PROGRAM++;
+
+	SetCurrentProgram(CURRENT_PROGRAM);
+	return CURRENT_PROGRAM;
+}
+u8 CSoundFontSynth::DecrementCurrentProgram()
+{
+	if(CURRENT_PROGRAM > 0)
+		CURRENT_PROGRAM--;
+	SetCurrentProgram(CURRENT_PROGRAM);
+	return CURRENT_PROGRAM;
+}
+
 
 bool CSoundFontSynth::SwitchSoundFont(size_t nIndex)
 {
