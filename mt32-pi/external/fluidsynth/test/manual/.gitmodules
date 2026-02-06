@@ -1,0 +1,9 @@
+[submodule "SoundFont-Spec-Test"]
+	path = SoundFont-Spec-Test
+	url = https://github.com/mrbumpy409/SoundFont-Spec-Test
+[submodule "sf2/ANMP-data"]
+	path = sf2/ANMP-data
+	url = https://github.com/derselbst/ANMP-data
+[submodule "sf2/GeneralUser-GS"]
+	path = sf2/GeneralUser-GS
+	url = https://github.com/mrbumpy409/GeneralUser-GS

@@ -1,0 +1,33 @@
+Uplift - Active Dance Track
+		MID + <512K sbk
+
+I found the lowpass filter!
+
+©1997 Ian Chisholm - Ævolution
+
+
+Uplift ©1996 Ian Chisholm - Ævolution.
+
+Use Room 3, Chorus 1 in the control panel
+
+This track was produced on an Amiga A1200 (50Mhz 68030, 2Mb Chip 8Mb Fast RAM) 
+using OctaMED v6 (© Teijo Kinnunen)
+
+The Soundblaster AWE32 (and it's associated software) was used for MIDI.
+
+This is the Fourth AWE32 MIDI track produced by Ævolution.
+
+Most samples were sourced from the public domain, and converted / edited using Goldwave (© 
+Chris S. Craig.)
+
+MIDI Sound banks were created and edited using Vienna (© Creative Technology)
+
+MIDI initialisation and recording was done in Cakewalk Professional v3 (© Twelve Tone 
+Systems)
+
+Soundblaster AWE32 is a copyright of Creative Labs, Inc.
+
+Music, sequencing, production, mixing and song name - Ian Chisholm.
+
+
+* Not yet finished *
