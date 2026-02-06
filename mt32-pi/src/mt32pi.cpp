@@ -833,7 +833,7 @@ void CMT32Pi::UpdateUSB(bool bStartup)
 		m_pUSBMIDIDevice->RegisterRemovedHandler(USBMIDIDeviceRemovedHandler, &m_pUSBMIDIDevice);
 		m_pUSBMIDIDevice->RegisterPacketHandler(USBMIDIPacketHandler);
 		LOGNOTE("Using USB MIDI interface");
-		m_bSerialMIDIEnabled = false;
+		//m_bSerialMIDIEnabled = false;
 	}
 
 	if (!m_pUSBSerialDevice && (m_pUSBSerialDevice = static_cast<CUSBSerialDevice*>(CDeviceNameService::Get()->GetDevice("utty1", FALSE))))
@@ -841,7 +841,7 @@ void CMT32Pi::UpdateUSB(bool bStartup)
 		m_pUSBSerialDevice->SetBaudRate(m_pConfig->MIDIUSBSerialBaudRate);
 		m_pUSBSerialDevice->RegisterRemovedHandler(USBMIDIDeviceRemovedHandler, &m_pUSBSerialDevice);
 		LOGNOTE("Using USB serial interface");
-		m_bSerialMIDIEnabled = false;
+		//m_bSerialMIDIEnabled = false;
 	}
 }
 
@@ -916,25 +916,55 @@ void CMT32Pi::UpdateNetwork()
 
 void CMT32Pi::UpdateMIDI()
 {
-	size_t nBytes;
-	u8 Buffer[MIDIRxBufferSize];
+	/*
+	size_t USB_nBytes = 0;
+	size_t UART_nBytes = 0;
+	size_t RING_nBytes = 0;
 
+	u8 USB_Buffer[MIDIRxBufferSize];
+	u8 UART_Buffer[MIDIRxBufferSize];
+	u8 RING_Buffer[MIDIRxBufferSize];
+
+	*/
+
+	size_t nBytes = 0;
+	u8 Buffer[MIDIRxBufferSize];
+	
+	
+	//if (m_bSerialMIDIEnabled){
+	nBytes = ReceiveSerialMIDI(Buffer, sizeof(Buffer));
+	if (nBytes != 0)
+		ParseMIDIBytes(Buffer, nBytes);
+	//}
+	
 	// Read MIDI messages from serial device or ring buffer
-	if (m_bSerialMIDIEnabled)
-		nBytes = ReceiveSerialMIDI(Buffer, sizeof(Buffer));
-	else if (m_pUSBSerialDevice)
+	if (m_pUSBSerialDevice)
 	{
 		const int nResult = m_pUSBSerialDevice->Read(Buffer, sizeof(Buffer));
 		nBytes = nResult > 0 ? static_cast<size_t>(nResult) : 0;
+
+		if (nBytes != 0)
+			ParseMIDIBytes(Buffer, nBytes);
 	}
-	else
-		nBytes = m_MIDIRxBuffer.Dequeue(Buffer, sizeof(Buffer));
 
-	if (nBytes == 0)
-		return;
 
-	// Process MIDI messages
-	ParseMIDIBytes(Buffer, nBytes);
+	nBytes = m_MIDIRxBuffer.Dequeue(Buffer, sizeof(Buffer));
+
+	if (nBytes != 0)
+			ParseMIDIBytes(Buffer, nBytes);
+
+	//if (nBytes == 0)
+	//	return;
+
+/*
+	u8 *Total_Buffer = (u8*)malloc(USB_nBytes + UART_nBytes + RING_nBytes);
+
+	memcpy(Total_Buffer, USB_Buffer, USB_nBytes * sizeof(u8));
+	memcpy(Total_Buffer + USB_Buffer, UART_Buffer, UART_nBytes * sizeof(u8));
+	memcpy(Total_Buffer + UART_Buffer, RING_Buffer, RING_nBytes * sizeof(u8));
+*/
+	// Process all MIDI messages
+	//ParseMIDIBytes(Total_Buffer, USB_nBytes + UART_nBytes + RING_nBytes);
 
 	// Reset the Active Sense timer
 	s_pThis->m_nActiveSenseTime = s_pThis->m_pTimer->GetTicks();
@@ -1064,8 +1094,30 @@ void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 {
 	if (Event.Button == TButton::EncoderButton)
 	{
-		LCDLog(TLCDLogType::Notice, "Enc. button %s", Event.bPressed ? "PRESSED" : "RELEASED");
-		return;
+		//LCDLog(TLCDLogType::Notice, "Enc. button %s", Event.bPressed ? "PRESSED" : "RELEASED"); return;
+
+		// Next SoundFont
+		const size_t nSoundFonts = m_pSoundFontSynth->GetSoundFontManager().GetSoundFontCount();
+
+		if (!nSoundFonts)
+			LCDLog(TLCDLogType::Error, "No SoundFonts!");
+		else
+		{
+			size_t nNextSoundFont;
+			if (m_bDeferredSoundFontSwitchFlag)
+				nNextSoundFont = (m_nDeferredSoundFontSwitchIndex + 1) % nSoundFonts;
+			else
+			{
+				// Current SoundFont was probably on a USB stick that has since been removed
+				const size_t nCurrentSoundFont = m_pSoundFontSynth->GetSoundFontIndex();
+				if (nCurrentSoundFont > nSoundFonts)
+					nNextSoundFont = 0;
+				else
+					nNextSoundFont = (nCurrentSoundFont + 1) % nSoundFonts;
+			}
+
+			DeferSwitchSoundFont(nNextSoundFont);
+		}
 	}
 
 	if (!Event.bPressed)
