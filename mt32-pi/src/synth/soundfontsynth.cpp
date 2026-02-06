@@ -244,6 +244,8 @@ void CSoundFontSynth::HandleMIDIShortMessage(u32 nMessage)
 		// Control change
 		case 0xB0:
 			fluid_synth_cc(m_pSynth, nChannel, nData1, nData2);
+			if(nChannel == 0 && nData1 == 0x07) // Volume Change Channel 0
+				CUserInterface::ShowSystemMessage("Volume: %d", nData1);
 			break;
 
 		// Program change
