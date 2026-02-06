@@ -3,4 +3,4 @@
 #cd mt32-pi
 #git submodule update --recursive --remote
 
-git clone https://github.com/Scondo/mt32-pi.git --recursive
+#git clone https://github.com/Scondo/mt32-pi.git --recursive

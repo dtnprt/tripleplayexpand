@@ -35,6 +35,8 @@
 
 LOGMODULE("soundfontsynth");
 const char SoundFontPath[] = "soundfonts";
+int CURRENT_PROGRAM = 0;
+
 
 extern "C"
 {
@@ -246,6 +248,8 @@ void CSoundFontSynth::HandleMIDIShortMessage(u32 nMessage)
 
 		// Program change
 		case 0xC0:
+
+			CURRENT_PROGRAM = nData1;
 			fluid_synth_program_change(m_pSynth, nChannel, nData1);
 
 			// Hack for Triple Play Express
@@ -337,38 +341,24 @@ void CSoundFontSynth::ReportStatus() const
 }
 
 void CSoundFontSynth::UpdateLCD(CLCD& LCD, unsigned int nTicks)
-{
-	/*
-	const u8 nBarHeight = LCD.Height();
+{	
+	const u8 nBarHeight = 32;
 	float ChannelLevels[16], PeakLevels[16];
-	m_MIDIMonitor.GetChannelLevels(nTicks, ChannelLevels, PeakLevels, m_nPercussionMask);
-
-	// Show 6 Channels (each String)
-	CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, 6, true);
-
-	//CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, 16, true);
-
-	*/
-	const int channel_count = 6;
-	const int master_channel = 0;
 	int sfont_id = 0;
 	int bank_num = 0;
 	int preset_num = 0;
 
-	fluid_preset_t* presetIndex = fluid_synth_get_channel_preset(m_pSynth,master_channel);
+	fluid_preset_t* presetIndex = fluid_synth_get_channel_preset(m_pSynth, 0);
 	const char* presetName = fluid_preset_get_name (presetIndex) ;
 
-	fluid_synth_get_program (m_pSynth, master_channel, &sfont_id, &bank_num, &preset_num);
+	fluid_synth_get_program (m_pSynth, 0, &sfont_id, &bank_num, &preset_num);
 
 	//const u8 nBarHeight = LCD.Height();
-	const u8 nBarHeight = 32;
-	float ChannelLevels[channel_count], PeakLevels[channel_count];
-	m_MIDIMonitor.GetChannelLevels(nTicks, ChannelLevels, PeakLevels, m_nPercussionMask);
-	CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, channel_count, true);
-	if (m_pUI)
-		m_pUI->ShowSystemMessage(presetName);
 
-	//CUserInterface::DrawHeader(LCD, m_nVolume, presetName, master_channel, bank_num, preset_num);
+	m_MIDIMonitor.GetChannelLevels(nTicks, ChannelLevels, PeakLevels, m_nPercussionMask);
+	CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, 6, true);
+	CUserInterface::DrawHeader(LCD, m_nVolume, presetName, 0, bank_num, preset_num);
+	
 }
 
 bool CSoundFontSynth::SwitchSoundFont(size_t nIndex)

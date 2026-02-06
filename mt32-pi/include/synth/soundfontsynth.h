@@ -75,6 +75,7 @@ private:
 	CSoundFontManager m_SoundFontManager;
 
 	static void FluidSynthLogCallback(int nLevel, const char* pMessage, void* pUser);
+
 };
 
 #endif

@@ -32,6 +32,7 @@
 constexpr u32 ScrollDelayMillis = 1500;
 constexpr u32 ScrollRateMillis = 175;
 constexpr u8 BarSpacingPixels = 2;
+constexpr u8 HeaderTextBufferSize = 128;
 constexpr u8 SpinnerChars[] = {'_', '_', '_', '-', '\'', '\'', '^', '^', '`', '`', '-', '_', '_', '_'};
 
 CUserInterface::CUserInterface()
@@ -230,6 +231,7 @@ u8 CUserInterface::CenterMessageOffset(CLCD& LCD, const char* pMessage)
 	return nMessageLength >= nCharWidth ? 0 : (nCharWidth - nMessageLength) / 2;
 }
 
+
 void CUserInterface::DrawChannelLevels(CLCD& LCD, u8 nBarHeight, float* pChannelLevels, float* pPeakLevels, u8 nChannels, bool bDrawBarBases)
 {
 	if (LCD.GetType() == CLCD::TType::Character)
@@ -244,7 +246,40 @@ void CUserInterface::DrawChannelLevels(CLCD& LCD, u8 nBarHeight, float* pChannel
 		const u8 nBarWidth = (LCD.Width() - nTotalBarSpacing) / nChannels;
 		const u8 nTotalBarWidth = nBarWidth * nChannels;
 		const u8 nBarOffsetX = (LCD.Width() - nTotalBarWidth - nTotalBarSpacing) / 2;
-		DrawChannelLevelsGraphical(LCD, nBarOffsetX, 0, nBarWidth, nBarHeight, BarSpacingPixels, pChannelLevels, pPeakLevels, nChannels, bDrawBarBases);
+		//DrawChannelLevelsGraphical(LCD, nBarOffsetX, 0, nBarWidth, nBarHeight, BarSpacingPixels, pChannelLevels, pPeakLevels, nChannels, bDrawBarBases);
+		DrawChannelLevelsGraphical(LCD, nBarOffsetX, 32, nBarWidth, nBarHeight, BarSpacingPixels, pChannelLevels, pPeakLevels, nChannels, bDrawBarBases);
+	}
+}
+
+/*
+void CUserInterface::DrawChannelLevels(CLCD& LCD, u8 nBarHeight, float* pChannelLevels, float* pPeakLevels, u8 nChannels, bool bDrawBarBases)
+{
+	if (LCD.GetType() == CLCD::TType::Character)
+	{
+		const u8 nBarSpacing = LCD.Width() / nChannels / 2;
+		const u8 nBarOffsetX = (LCD.Width() - nChannels - nChannels * nBarSpacing) / 2;
+		DrawChannelLevelsCharacter(LCD, nBarHeight, nBarOffsetX, 0, nBarSpacing, pChannelLevels, nChannels, bDrawBarBases);
+	}
+	else
+	{
+		const u8 nTotalBarSpacing = (nChannels - 1) * BarSpacingPixels;
+		const u8 nBarWidth = (LCD.Width() - nTotalBarSpacing) / nChannels;
+		const u8 nTotalBarWidth = nBarWidth * nChannels;
+		const u8 nBarOffsetX = (LCD.Width() - nTotalBarWidth - nTotalBarSpacing) / 2;
+		//LCD.Print(pText, 0, 1, true);
+		//DrawChannelLevelsGraphical(LCD, nBarOffsetX, 0, nBarWidth, nBarHeight, BarSpacingPixels, pChannelLevels, pPeakLevels, nChannels, bDrawBarBases);
+		DrawChannelLevelsGraphical(LCD, nBarOffsetX, 32, nBarWidth, nBarHeight, BarSpacingPixels, pChannelLevels, pPeakLevels, nChannels, bDrawBarBases);
+	}
+}
+*/
+void CUserInterface::DrawHeader(CLCD& LCD, u8 Volume, const char* PresetName, int channel, int bank_num, int preset_num)
+{
+	if (LCD.GetType() == CLCD::TType::Graphical)
+	{
+		char m_HeaderTextBuffer[HeaderTextBufferSize];
+		//snprintf(m_HeaderTextBuffer, sizeof(m_HeaderTextBuffer), "%d:%d:%d %s", channel, bank_num, preset_num, PresetName);
+		snprintf(m_HeaderTextBuffer, sizeof(m_HeaderTextBuffer), "%d %s", preset_num, PresetName);
+		LCD.Print(m_HeaderTextBuffer, 0,0,true);
 	}
 }
 
@@ -292,6 +327,7 @@ void CUserInterface::DrawChannelLevelsGraphical(CLCD& LCD, u8 nBarOffsetX, u8 nB
 	assert(pChannelLevels != nullptr);
 	const u8 nBarMaxY = nBarHeight - 1;
 
+	//for (u8 nChannel = nChannels; nChannel > 0; --nChannel) // Reverse for TriplePlayExpress
 	for (u8 nChannel = 0; nChannel < nChannels; ++nChannel)
 	{
 		const u8 nLevelPixels = pChannelLevels[nChannel] * nBarMaxY;
