@@ -356,7 +356,7 @@ void CSoundFontSynth::UpdateLCD(CLCD& LCD, unsigned int nTicks)
 	//const u8 nBarHeight = LCD.Height();
 
 	m_MIDIMonitor.GetChannelLevels(nTicks, ChannelLevels, PeakLevels, m_nPercussionMask);
-	CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, 6, true);
+	CUserInterface::DrawChannelLevels(LCD, nBarHeight, ChannelLevels, PeakLevels, 16, true);
 	CUserInterface::DrawHeader(LCD, m_nVolume, presetName, 0, bank_num, preset_num);
 	
 }
