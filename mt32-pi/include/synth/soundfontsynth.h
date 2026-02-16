@@ -57,6 +57,7 @@ public:
 	void SetCurrentProgram(u8 PG);
 	u8 IncrementCurrentProgram();
 	u8 DecrementCurrentProgram();
+	u8 ChangeCurrentProgramm(int8_t delta);
 
 private:
 	bool Reinitialize(const char* pSoundFontPath, const TFXProfile* pFXProfile);

@@ -342,7 +342,7 @@ void CSoundFontSynth::ReportStatus() const
 
 void CSoundFontSynth::UpdateLCD(CLCD& LCD, unsigned int nTicks)
 {	
-	const u8 nBarHeight = 32;
+	const u8 nBarHeight = 16;
 	float ChannelLevels[16], PeakLevels[16];
 	int sfont_id = 0;
 	int bank_num = 0;
@@ -376,6 +376,20 @@ void CSoundFontSynth::SetCurrentProgram(u8 PG){
 		fluid_synth_program_change(m_pSynth, 4, CURRENT_PROGRAM);
 		fluid_synth_program_change(m_pSynth, 5, CURRENT_PROGRAM);
 
+}
+
+u8 CSoundFontSynth::ChangeCurrentProgramm(int8_t delta)
+{
+	CURRENT_PROGRAM += delta;
+
+	if(CURRENT_PROGRAM > 127)
+		CURRENT_PROGRAM = 127;
+
+	else if(CURRENT_PROGRAM < 0)
+		CURRENT_PROGRAM = 0;
+
+	SetCurrentProgram(CURRENT_PROGRAM);
+	return CURRENT_PROGRAM;
 }
 
 u8 CSoundFontSynth::IncrementCurrentProgram()

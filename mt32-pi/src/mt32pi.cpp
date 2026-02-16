@@ -1084,10 +1084,10 @@ void CMT32Pi::ProcessEventQueue()
 				break;
 
 			case TEventType::Encoder:
-				if(Event.Encoder.Encoder == TEncoder::Encoder1)
+				if(Event.Encoder.Encoder == TEncoder::Encoder2)
 					SetMasterVolume(m_nMasterVolume + Event.Encoder.nDelta);
-				else if(Event.Encoder.Encoder == TEncoder::Encoder2)
-					SetMasterVolume(m_nMasterVolume + Event.Encoder.nDelta);
+				else if(Event.Encoder.Encoder == TEncoder::Encoder1)
+					m_pSoundFontSynth->ChangeCurrentProgramm(Event.Encoder.nDelta);
 				break;
 		}
 	}
@@ -1302,8 +1302,9 @@ void CMT32Pi::LCDLog(TLCDLogType Type, const char* pFormat...)
 		if (m_pLCD->GetType() == CLCD::TType::Graphical && !m_pConfig->SystemVerbose)
 			return;
 
-		u8 nOffsetX = CUserInterface::CenterMessageOffset(*m_pLCD, Buffer);
-		m_pLCD->Print(Buffer, nOffsetX, 1, true, true);
+		//u8 nOffsetX = CUserInterface::CenterMessageOffset(*m_pLCD, Buffer);
+		//m_pLCD->Print(Buffer, nOffsetX, 1, true, true,false, true);
+		m_pLCD->Print(Buffer, 1, 1, true, true,false, true);
 	}
 
 	// Let LCD task pick up the message in its next update
