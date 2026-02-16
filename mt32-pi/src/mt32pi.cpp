@@ -1084,7 +1084,10 @@ void CMT32Pi::ProcessEventQueue()
 				break;
 
 			case TEventType::Encoder:
-				SetMasterVolume(m_nMasterVolume + Event.Encoder.nDelta);
+				if(Event.Encoder.Encoder == TEncoder::Encoder1)
+					SetMasterVolume(m_nMasterVolume + Event.Encoder.nDelta);
+				else if(Event.Encoder.Encoder == TEncoder::Encoder2)
+					SetMasterVolume(m_nMasterVolume + Event.Encoder.nDelta);
 				break;
 		}
 	}
@@ -1092,7 +1095,7 @@ void CMT32Pi::ProcessEventQueue()
 
 void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 {
-	if (Event.Button == TButton::EncoderButton && Event.bPressed )
+	if (Event.Button == TButton::EncoderButton1 && Event.bPressed )
 	{ // Pressed
 		//LCDLog(TLCDLogType::Notice, "Enc. button %s", Event.bPressed ? "PRESSED" : "RELEASED"); return;
 
@@ -1119,9 +1122,14 @@ void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 			DeferSwitchSoundFont(nNextSoundFont);
 		}
 	}
-	else 	if (Event.Button == TButton::EncoderButton && !Event.bPressed )
+	else 	if (Event.Button == TButton::EncoderButton1 && !Event.bPressed )
 	{
 		// Release
+	}
+
+	if (Event.Button == TButton::EncoderButton2 )
+	{ // Pressed
+		LCDLog(TLCDLogType::Notice, "Enc. button %s", Event.bPressed ? "PRESSED" : "RELEASED"); return;
 	}
 
 	if (!Event.bPressed)
@@ -1262,13 +1270,12 @@ void CMT32Pi::SetMasterVolume(s32 nVolume)
 {
 	m_nMasterVolume = Utility::Clamp(nVolume, 0, 100);
 
-	if (m_pMT32Synth)
-		m_pMT32Synth->SetMasterVolume(m_nMasterVolume);
-	if (m_pSoundFontSynth)
+	//if (m_pSoundFontSynth)
 		m_pSoundFontSynth->SetMasterVolume(m_nMasterVolume);
-	if (m_pCurrentSynth == m_pSoundFontSynth)
+	//if (m_pCurrentSynth == m_pSoundFontSynth)
 		LCDLog(TLCDLogType::Notice, "Volume: %d", m_nMasterVolume);
 }
+
 
 void CMT32Pi::LEDOn()
 {

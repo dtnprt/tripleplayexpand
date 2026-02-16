@@ -26,22 +26,31 @@
 constexpr u8 GPIOPinButton1 = 17;
 constexpr u8 GPIOPinButton2 = 27;
 
-constexpr u8 GPIOPinEncoderButton = 4;
-constexpr u8 GPIOPinEncoderCLK    = 22;
-constexpr u8 GPIOPinEncoderDAT    = 23;
+constexpr u8 GPIOPinEncoder1Button = 4;
+constexpr u8 GPIOPinEncoder1CLK    = 22;
+constexpr u8 GPIOPinEncoder1DAT    = 23;
+
+constexpr u8 GPIOPinEncoder2Button = 26;
+constexpr u8 GPIOPinEncoder2CLK    = 16;
+constexpr u8 GPIOPinEncoder2DAT    = 12;
 
 constexpr u8 ButtonMask = 1 << static_cast<u8>(TButton::Button1) |
 			  1 << static_cast<u8>(TButton::Button2) |
-			  1 << static_cast<u8>(TButton::EncoderButton);
+			  1 << static_cast<u8>(TButton::EncoderButton1) |
+			  1 << static_cast<u8>(TButton::EncoderButton2);
 
 CControlSimpleEncoder::CControlSimpleEncoder(TEventQueue& pEventQueue, CRotaryEncoder::TEncoderType EncoderType, bool bEncoderReversed)
 	: CControl(pEventQueue),
 
-	  m_GPIOEncoderButton(GPIOPinEncoderButton, TGPIOMode::GPIOModeInputPullUp),
+	  m_GPIOEncoderButton_1(GPIOPinEncoder1Button, TGPIOMode::GPIOModeInputPullUp),
+	  m_GPIOEncoderButton_2(GPIOPinEncoder2Button, TGPIOMode::GPIOModeInputPullUp),
+
 	  m_GPIOButton1(GPIOPinButton1, TGPIOMode::GPIOModeInputPullUp),
 	  m_GPIOButton2(GPIOPinButton2, TGPIOMode::GPIOModeInputPullUp),
 
-	  m_Encoder(EncoderType, bEncoderReversed, GPIOPinEncoderCLK, GPIOPinEncoderDAT)
+	  m_Encoder_1(EncoderType, bEncoderReversed, GPIOPinEncoder1CLK, GPIOPinEncoder1DAT),
+	  m_Encoder_2(EncoderType, bEncoderReversed, GPIOPinEncoder2CLK, GPIOPinEncoder2DAT)
+	  
 {
 }
 
@@ -49,12 +58,22 @@ void CControlSimpleEncoder::Update()
 {
 	CControl::Update();
 
-	const s8 nEncoderDelta = m_Encoder.Read();
-	if (nEncoderDelta != 0)
+	const s8 nEncoderDelta_1 = m_Encoder_1.Read();
+	if (nEncoderDelta_1 != 0)
 	{
 		TEvent Event;
 		Event.Type = TEventType::Encoder;
-		Event.Encoder.nDelta = nEncoderDelta;
+		Event.Encoder.Encoder = TEncoder::Encoder1;
+		Event.Encoder.nDelta = nEncoderDelta_1;
+		m_pEventQueue->Enqueue(Event);
+	}
+	const s8 nEncoderDelta_2 = m_Encoder_2.Read();
+	if (nEncoderDelta_2 != 0)
+	{
+		TEvent Event;
+		Event.Type = TEventType::Encoder;
+		Event.Encoder.Encoder = TEncoder::Encoder2;
+		Event.Encoder.nDelta = nEncoderDelta_2;
 		m_pEventQueue->Enqueue(Event);
 	}
 }
@@ -65,10 +84,13 @@ void CControlSimpleEncoder::ReadGPIOPins()
 	const u32 nGPIOState  = CGPIOPin::ReadAll();
 	const u8 nButtonState = (((nGPIOState >> GPIOPinButton1) & 1) << static_cast<u8>(TButton::Button1)) |
 				(((nGPIOState >> GPIOPinButton2) & 1) << static_cast<u8>(TButton::Button2)) |
-				(((nGPIOState >> GPIOPinEncoderButton) & 1) << static_cast<u8>(TButton::EncoderButton));
+				(((nGPIOState >> GPIOPinEncoder1Button) & 1) << static_cast<u8>(TButton::EncoderButton1)) |
+				(((nGPIOState >> GPIOPinEncoder2Button) & 1) << static_cast<u8>(TButton::EncoderButton2))
+				;
 
 	DebounceButtonState(nButtonState, ButtonMask);
 
 	// Update rotary encoder state
-	m_Encoder.ReadGPIOPins((nGPIOState >> GPIOPinEncoderCLK) & 1, (nGPIOState >> GPIOPinEncoderDAT) & 1);
+	m_Encoder_1.ReadGPIOPins((nGPIOState >> GPIOPinEncoder1CLK) & 1, (nGPIOState >> GPIOPinEncoder1DAT) & 1);
+	m_Encoder_2.ReadGPIOPins((nGPIOState >> GPIOPinEncoder2CLK) & 1, (nGPIOState >> GPIOPinEncoder2DAT) & 1);
 }

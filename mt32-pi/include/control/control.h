@@ -112,11 +112,13 @@ public:
 protected:
 	virtual void ReadGPIOPins() override;
 
-	CGPIOPin m_GPIOEncoderButton;
+	CGPIOPin m_GPIOEncoderButton_1;
+	CGPIOPin m_GPIOEncoderButton_2;
 	CGPIOPin m_GPIOButton1;
 	CGPIOPin m_GPIOButton2;
 
-	CRotaryEncoder m_Encoder;
+	CRotaryEncoder m_Encoder_1;
+	CRotaryEncoder m_Encoder_2;
 };
 
 #endif

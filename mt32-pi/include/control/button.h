@@ -32,9 +32,16 @@ enum TButton : u8
 	Button3,
 	Button4,
 
-	EncoderButton,
+	EncoderButton1,
+	EncoderButton2,
 
 	Max,
+};
+
+enum TEncoder : u8
+{
+	Encoder1,
+	Encoder2,
 };
 
 #endif

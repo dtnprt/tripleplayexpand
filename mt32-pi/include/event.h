@@ -38,6 +38,7 @@ struct TButtonEvent
 
 struct TEncoderEvent
 {
+	TEncoder Encoder;
 	s8 nDelta;
 };
 
