@@ -244,12 +244,14 @@ void CSoundFontSynth::HandleMIDIShortMessage(u32 nMessage)
 		// Control change
 		case 0xB0:
 			fluid_synth_cc(m_pSynth, nChannel, nData1, nData2);
-			if(m_pUI && nData1 != 30){
+			
+			/* DEBUG
+			if(m_pUI){
 				char m_HeaderTextBuffer[32];
 				snprintf(m_HeaderTextBuffer, sizeof(m_HeaderTextBuffer), "CC #%d: %d", nData1, nData2);
 				m_pUI->ShowSystemMessage(m_HeaderTextBuffer, false);
 			}
-
+			*/
 			break;
 
 		// Program change

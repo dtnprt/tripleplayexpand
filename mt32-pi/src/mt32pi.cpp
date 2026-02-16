@@ -1092,13 +1092,13 @@ void CMT32Pi::ProcessEventQueue()
 
 void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 {
-	if (Event.Button == TButton::EncoderButton)
-	{
+	if (Event.Button == TButton::EncoderButton && Event.bPressed )
+	{ // Pressed
 		//LCDLog(TLCDLogType::Notice, "Enc. button %s", Event.bPressed ? "PRESSED" : "RELEASED"); return;
 
 		// Next SoundFont
 		const size_t nSoundFonts = m_pSoundFontSynth->GetSoundFontManager().GetSoundFontCount();
-
+	
 		if (!nSoundFonts)
 			LCDLog(TLCDLogType::Error, "No SoundFonts!");
 		else
@@ -1118,6 +1118,10 @@ void CMT32Pi::ProcessButtonEvent(const TButtonEvent& Event)
 
 			DeferSwitchSoundFont(nNextSoundFont);
 		}
+	}
+	else 	if (Event.Button == TButton::EncoderButton && !Event.bPressed )
+	{
+		// Release
 	}
 
 	if (!Event.bPressed)
