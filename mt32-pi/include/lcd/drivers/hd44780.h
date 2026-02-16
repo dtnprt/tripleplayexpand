@@ -41,7 +41,8 @@ public:
 
 	// Character functions
 	virtual void Clear(bool bImmediate = true) override;
-	virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = true) override;
+	//virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = true) override;
+	virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = true, bool nInverted = false, bool nDoubleSize = false) override;
 
 protected:
 	enum class TWriteMode

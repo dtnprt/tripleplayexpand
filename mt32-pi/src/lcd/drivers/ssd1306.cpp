@@ -311,7 +311,7 @@ void CSSD1306::DrawFilledRect(u8 nX1, u8 nY1, u8 nX2, u8 nY2, bool bImmediate)
 	if (bImmediate)
 		WriteFrameBuffer(true);
 }
-
+//             DrawChar(char chChar, u8 nCursorX, u8 nCursorY, bool bInvered = false, bool bDoubleWidth = false) override;
 void CSSD1306::DrawChar(char chChar, u8 nCursorX, u8 nCursorY, bool bInverted, bool bDoubleWidth)
 {
 	const size_t nRowOffset    = nCursorY * m_nWidth * 2;
@@ -403,24 +403,24 @@ void CSSD1306::DrawImage(TImage Image, bool bImmediate)
 		WriteFrameBuffer(true);
 }
 
-void CSSD1306::Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine, bool bImmediate)
+void CSSD1306::Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine, bool bImmediate, bool nInverted, bool nDoubleSize)
 {
 	if (bClearLine)
 	{
 		for (u8 nChar = 0; nChar < nCursorX; ++nChar)
-			DrawChar(' ', nChar, nCursorY);
+			DrawChar(' ', nChar, nCursorY, nInverted, nDoubleSize);
 	}
 
 	while (*pText && nCursorX < 20)
 	{
-		DrawChar(*pText++, nCursorX, nCursorY);
+		DrawChar(*pText++, nCursorX, nCursorY, nInverted, nDoubleSize);
 		++nCursorX;
 	}
 
 	if (bClearLine)
 	{
 		while (nCursorX < 20)
-			DrawChar(' ', nCursorX++, nCursorY);
+			DrawChar(' ', nCursorX++, nCursorY, nInverted, nDoubleSize);
 	}
 
 	if (bImmediate)

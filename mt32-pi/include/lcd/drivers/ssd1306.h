@@ -52,13 +52,15 @@ public:
 
 	// Character functions
 	virtual void Clear(bool bImmediate = false) override;
-	virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = false) override;
+	//virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = false) override;
+	virtual void Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine = false, bool bImmediate = true, bool nInverted = false, bool nDoubleSize = false) override;
+
 
 	// Graphics functions
 	virtual void SetPixel(u8 nX, u8 nY) override;
 	virtual void ClearPixel(u8 nX, u8 nY) override;
 	virtual void DrawFilledRect(u8 nX1, u8 nY1, u8 nX2, u8 nY2, bool bImmediate = false) override;
-	virtual void DrawChar(char chChar, u8 nCursorX, u8 nCursorY, bool bInverted = false, bool bDoubleWidth = false) override;
+	virtual void DrawChar(char chChar, u8 nCursorX, u8 nCursorY, bool bInvered = false, bool bDoubleWidth = false) override;
 	virtual void DrawImage(TImage Image, bool bImmediate = false) override;
 	virtual void Flip() override;
 

@@ -52,7 +52,7 @@ public:
 
 	// Character functions (available when type is 'Character' or 'Graphical')
 	virtual void Clear(bool bImmediate = true) {};
-	virtual void Print(const char* pText, u8 nCursorX = 0, u8 nCursorY = 0, bool bClearLine = false, bool bImmediate = true) {};
+	virtual void Print(const char* pText, u8 nCursorX = 0, u8 nCursorY = 0, bool bClearLine = false, bool bImmediate = true, bool nInverted = false, bool nDoubleSize = false) {};
 
 	// Graphics functions (available when type is 'Graphical')
 	virtual void SetPixel(u8 nX, u8 nY) {};

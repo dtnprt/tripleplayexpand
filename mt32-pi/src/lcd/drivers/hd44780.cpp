@@ -133,7 +133,7 @@ bool CHD44780Base::Initialize()
 	return true;
 }
 
-void CHD44780Base::Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine, bool bImmediate)
+void CHD44780Base::Print(const char* pText, u8 nCursorX, u8 nCursorY, bool bClearLine, bool bImmediate, bool nInverted, bool nDoubleSize)
 {
 	if (bClearLine)
 	{
